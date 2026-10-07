@@ -24,19 +24,23 @@ export default function App() {
 
   return (
     <>
-      <div className="topbar">
-        <div className="brand" onClick={() => setQuery("")}>CinéScope</div>
-        <div className="menu">
+      <a className="skip-link" href="#contenu">Aller au contenu</a>
+      <header className="topbar">
+        <button type="button" className="brand" onClick={() => setQuery("")}>CinéScope</button>
+        <nav className="menu">
           <a href="#programme">Programme</a>
           <a href="#infos">Informations</a>
-        </div>
-      </div>
+        </nav>
+      </header>
 
-      <div className="page">
+      <main id="contenu" className="page">
         <h1>Films à l’affiche</h1>
         <p className="intro">Découvrez la programmation de cette semaine.</p>
+        <label className="search-label" htmlFor="search">Rechercher un film</label>
         <input
+          id="search"
           className="search"
+          type="search"
           placeholder="Rechercher un film"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
@@ -44,16 +48,20 @@ export default function App() {
 
         <div id="programme" className="film-grid">
           {filteredFilms.map((film) => (
-            <div className="film-card" key={film.id} onClick={() => setSelected(film.title)}>
-              <img src={film.poster} />
+            <div className="film-card" key={film.id}>
+              <img src={film.poster} alt={`Affiche du film ${film.title}`} />
               <div className="film-content">
                 <div className={film.available ? "availability available" : "availability unavailable"} />
-                <h4>{film.title}</h4>
+                <h2>
+                  <button type="button" className="film-select" onClick={() => setSelected(film.title)}>{film.title}</button>
+                </h2>
                 <p>{film.genre} · {film.time}</p>
+                <p className="status">{film.available ? "Places disponibles" : "Complet"}</p>
                 <button
+                  type="button"
                   className="favorite"
+                  aria-label={`${favorites.includes(film.id) ? "Retirer des favoris" : "Ajouter aux favoris"} : ${film.title}`}
                   onClick={(event) => {
-                    event.stopPropagation();
                     toggleFavorite(film.id);
                   }}
                 >
@@ -64,8 +72,13 @@ export default function App() {
           ))}
         </div>
 
-        {selected && <p className="selection">Film sélectionné : {selected}</p>}
-      </div>
+        <output className="selection">{selected && `Film sélectionné : ${selected}`}</output>
+
+        <section id="infos">
+          <h2>Informations</h2>
+          <p className="intro">La programmation est mise à jour chaque semaine.</p>
+        </section>
+      </main>
     </>
   );
 }
